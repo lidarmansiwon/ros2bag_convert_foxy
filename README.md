@@ -1,3 +1,56 @@
+# Edit ros2bag_convert source code for using in foxy ros2
+
+<<"message_conventer.py">>
+
+def _is_ros_binary_type(field_type):
+""" Checks if the field is a binary array one, fixed size or not
+list(bytearray(de(encoded_data)))
+_is_ros_binary_type("uint8")
+>>> False
+_is_ros_binary_type("uint8[]")
+>>> True
+_is_ros_binary_type("uint8[3]")
+>>> True
+_is_ros_binary_type("char")
+>>> False
+_is_ros_binary_type("char[]")
+>>> True
+_is_ros_binary_type("char[3]")
+>>> True
+_is_ros_binary_type("octet")
+>>> True
+"""
+return field_type.startswith('uint8[') or field_type.startswith('char[') **or field_type.startswith('octet')
+**
+----------------------------------------------------------------------------------------------------
+
+def convert_ros_message_to_dictionary(message):
+    """
+    Takes in a ROS message and returns a Python dictionary.
+
+    Example:
+        ros_message = std_msgs.msg.String(data="Hello, Robot")
+        dict_message = convert_ros_message_to_dictionary(ros_message)
+    """
+**    dictionary = {}
+    if hasattr(message, 'get_fields_and_field_types'):
+        message_fields = message.get_fields_and_field_types()
+        for (field_name, field_type) in message_fields.items():
+            field_value = getattr(message, field_name)
+            dictionary[field_name] = _convert_from_ros_type(field_type, field_value)
+    else:
+        dictionary = None
+
+    return dictionary**
+----------------------------------------------------------------------------------------------------
+<< "main.py" >>
+
+    for i in range(len(data)):
+        topic_name,topic_type = data[i][0],data[i][1]
+        save_csv_file.save_csv_file(data[i][2:],file_url[:file_url.rfind("/")]+".csv")
+
+
+
 # ros2bag_convert
 
 [中文](README.md) | [English](README_EN.md)
