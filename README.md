@@ -2,8 +2,8 @@
 
 <<"message_conventer.py">>
 
-
-```def _is_ros_binary_type(field_type):
+```
+def _is_ros_binary_type(field_type):
 """ Checks if the field is a binary array one, fixed size or not
 list(bytearray(de(encoded_data)))
 _is_ros_binary_type("uint8")
@@ -21,11 +21,12 @@ _is_ros_binary_type("char[3]")
 _is_ros_binary_type("octet")
 >>> True
 """
-return field_type.startswith('uint8[') or field_type.startswith('char[') or field_type.startswith('octet')```
+return field_type.startswith('uint8[') or field_type.startswith('char[') or **field_type.startswith('octet')**
+```
 
 ----------------------------------------------------------------------------------------------------
-
-```def convert_ros_message_to_dictionary(message):
+```
+def convert_ros_message_to_dictionary(message):
     """
     Takes in a ROS message and returns a Python dictionary.
 
@@ -42,7 +43,8 @@ return field_type.startswith('uint8[') or field_type.startswith('char[') or fiel
     else:
         dictionary = None
 
-    return dictionary**```
+    return dictionary**
+```
 ----------------------------------------------------------------------------------------------------
 << "main.py" >>
 
