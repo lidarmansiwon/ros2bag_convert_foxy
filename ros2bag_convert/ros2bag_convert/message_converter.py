@@ -236,11 +236,20 @@ def convert_ros_message_to_dictionary(message):
         dict_message = convert_ros_message_to_dictionary(ros_message)
     """
     dictionary = {}
-    #message_fields = _get_message_fields(message)
-    message_fields = message.get_fields_and_field_types()
-    for (field_name, field_type) in message_fields.items():
-        field_value = getattr(message, field_name)
-        dictionary[field_name] = _convert_from_ros_type(field_type, field_value)
+    # #message_fields = _get_message_fields(message)
+    # message_fields = message.get_fields_and_field_types()
+    # for (field_name, field_type) in message_fields.items():
+    #     field_value = getattr(message, field_name)
+    #     dictionary[field_name] = _convert_from_ros_type(field_type, field_value)
+
+    # return dictionary
+    if hasattr(message, 'get_fields_and_field_types'):
+        message_fields = message.get_fields_and_field_types()
+        for (field_name, field_type) in message_fields.items():
+            field_value = getattr(message, field_name)
+            dictionary[field_name] = _convert_from_ros_type(field_type, field_value)
+    else:
+        dictionary = None
 
     return dictionary
 
@@ -255,14 +264,8 @@ def _convert_from_ros_type(field_type, field_value):
         field_value = list(field_value)
     elif _is_field_type_an_array(field_type):
         field_value = _convert_from_ros_array(field_type, field_value)
-    elif field_type == np.ndarray or type(field_value) == np.ndarray:
-        print("Unsupported type: ", field_type)
-        return None
     else:
-        try:
-            field_value = convert_ros_message_to_dictionary(field_value)
-        except:
-            print("field_type: ", field_type)
+        field_value = convert_ros_message_to_dictionary(field_value)
 
     return field_value
 
@@ -282,7 +285,7 @@ def _is_ros_binary_type(field_type):
     _is_ros_binary_type("char[3]")
     >>> True
     """
-    return field_type.startswith('uint8[') or field_type.startswith('char[')
+    return field_type.startswith('uint8[') or field_type.startswith('char[') or field_type.startswith('octet')
 
 def _is_ros_header(field_type):
     return field_type.find('std_msgs/Header') >= 0
@@ -317,12 +320,7 @@ def _is_field_type_binary_type_array(field_type):
 def _is_field_type_a_primitive_array(field_type):
     bracket_index = field_type.find('<')
     if bracket_index < 0:
-        bracket_index = field_type.find('[')
-        if bracket_index < 0:
-             return False
-        else:
-             list_type = field_type[:field_type.index("[")]
-             return list_type in ros_primitive_types
+        return False
     else:
         list_type = field_type[field_type.index("<")+1:-1]
         return list_type in ros_primitive_types
