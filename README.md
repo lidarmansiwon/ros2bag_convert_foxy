@@ -21,9 +21,8 @@ _is_ros_binary_type("char[3]")
 _is_ros_binary_type("octet")
 >>> True
 """
-return field_type.startswith('uint8[') or field_type.startswith('char[') or **field_type.startswith('octet')**
+return field_type.startswith('uint8[') or field_type.startswith('char[') or **field_type.startswith('octet') **
 ```
-
 ----------------------------------------------------------------------------------------------------
 ```
 def convert_ros_message_to_dictionary(message):
@@ -34,7 +33,8 @@ def convert_ros_message_to_dictionary(message):
         ros_message = std_msgs.msg.String(data="Hello, Robot")
         dict_message = convert_ros_message_to_dictionary(ros_message)
     """
-**    dictionary = {}
+
+    **dictionary = {}
     if hasattr(message, 'get_fields_and_field_types'):
         message_fields = message.get_fields_and_field_types()
         for (field_name, field_type) in message_fields.items():
@@ -43,7 +43,7 @@ def convert_ros_message_to_dictionary(message):
     else:
         dictionary = None
 
-    return dictionary**
+    return dictionary **
 ```
 ----------------------------------------------------------------------------------------------------
 << "main.py" >>
